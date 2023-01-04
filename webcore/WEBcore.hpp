@@ -29,7 +29,6 @@ namespace WEBnamespace
 
         WEBcoreEvent next_event(WEBsocket &soc)
         {
-            int wait_time;
             int new_client;
 
             new_client = _accept();
@@ -67,11 +66,11 @@ namespace WEBnamespace
             struct sockaddr addr;
             socklen_t addrlen;
             int sock;
-            int res;
 
             sock = accept(server_socket.fd(), &addr, &addrlen);
-            PANIC_ON(sock < 0 and errno != EWOULDBLOCK, "core", "cannot accept socket");
-            INFO("core", "accepted client ");
+            PANIC_ON(sock < 0 and errno != EAGAIN, "core", "cannot accept socket");
+            if (sock >= 0)
+                INFO("core", SS << "accepted client" << sock << errno);
             return sock;
         }
 

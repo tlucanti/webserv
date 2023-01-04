@@ -14,9 +14,11 @@ namespace WEBnamespace
 
             switch (core.next_event(sock)) {
                 case WEBcore::NO_EVENT:
-                    usleep(100);
+                    usleep(1000000);
+                    VERBOSE("server", "no event");
                     break ;
                 case WEBcore::NEW_CLIENT:
+                    VERBOSE("server", "new client");
                     break ;
                 case WEBcore::POLL_IN:
                     content = sock.recv();

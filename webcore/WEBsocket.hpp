@@ -20,7 +20,7 @@ namespace WEBnamespace
 
         WEBsocket(const std::string &address, uint16_t port, bool nonblock=true)
         {
-            struct sockaddr_in addr;
+            struct sockaddr_in addr {};
             int yes = 1;
 
             sock = socket(AF_INET, SOCK_STREAM, 0);
