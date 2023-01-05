@@ -41,8 +41,11 @@ namespace WEBnamespace
 
         std::string recv()
         {
+            PANIC_ON(sock == -1, "socket", "reading from invalid socket");
+
             std::string content(4096, 0);
 
+            VERBOSE("socket", "reading from socket " << sock);
             ::recv(sock, content.data(), 4096, 0);
             return content;
         }

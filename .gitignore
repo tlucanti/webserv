@@ -3,4 +3,5 @@ tags
 webserv
 *.swp
 *.swo
+webserv.dSYM
 

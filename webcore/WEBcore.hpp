@@ -16,9 +16,9 @@ namespace WEBnamespace
     public:
         enum WEBcoreEvent
         {
-            NO_EVENT,
-            NEW_CLIENT,
-            POLL_IN
+            WEB_NO_EVENT,
+            WEB_NEW_CLIENT,
+            WEB_POLL_IN
         };
 
         WEBcore(const std::string &address, uint16_t port) :
@@ -39,21 +39,23 @@ namespace WEBnamespace
                 cli.events = POLLIN;
                 cli.revents = 0;
                 clients.push_back(cli);
-                return NEW_CLIENT;
+                return WEB_NEW_CLIENT;
             }
 
             if (polls_remaining == 0) {
                 polls_remaining = poll(clients.data(), clients.size(), 0);
+                last_fd = -1;
                 PANIC_ON(polls_remaining < 0, "core", "poll error");
                 if (polls_remaining == 0) {
-                    return NO_EVENT;
+                    return WEB_NO_EVENT;
                 }
             }
             for (++last_fd; last_fd < static_cast<int>(clients.size()); ++last_fd) {
                 if (clients.at(last_fd).revents & POLLIN) {
                     clients.at(last_fd).revents = 0;
                     --polls_remaining;
-                    return POLL_IN;
+                    soc.assign(clients.at(last_fd).fd);
+                    return WEB_POLL_IN;
                 }
             }
             PANIC_ON(true, "core", "no events after poll");
@@ -70,7 +72,7 @@ namespace WEBnamespace
             sock = accept(server_socket.fd(), &addr, &addrlen);
             PANIC_ON(sock < 0 and errno != EAGAIN, "core", "cannot accept socket");
             if (sock >= 0)
-                INFO("core", SS << "accepted client" << sock << errno);
+                INFO("core", "accepted client " << sock << ' ' << errno);
             return sock;
         }
 
